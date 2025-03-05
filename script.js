@@ -1,54 +1,42 @@
-// Select elements from the DOM
-const inputBox = document.querySelector("input");
-const addButton = document.querySelector("button");
-const taskList = document.querySelector(".taskList");
+const inputBox = document.querySelector("#input-box");
+const listContainer = document.querySelector("#list-container");
 
-// Function to add a new task
-function addTask() {
-    // Get user input
-    let taskText = inputBox.value.trim(); 
 
-    // Check if input is empty
-    if (taskText === "") {
-        alert("Please enter a task!"); 
-        return;
+function addTask(){
+    if(inputBox.value === ''){
+        alert("You must write something!")
     }
-
-    // Create a new <li> element
-    let listItem = document.createElement("li");
-    listItem.textContent = taskText;
-
-    // Create a "Delete" button
-    let deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
-    deleteButton.classList.add("deleteTask");
-
-    // Append the button to the task item
-    listItem.appendChild(deleteButton);
-
-    // Append the task to the task list
-    taskList.appendChild(listItem);
-
-    // Clear the input box after adding the task
+    else{
+        let li = document.createElement("li");
+        li.innerHTML = inputBox.value;
+        listContainer.appendChild(li);
+        let span = document.createElement("span");
+        span.innerHTML = "\u00d7";
+        li.appendChild(span);
+    }
     inputBox.value = "";
+    saveData();
 }
 
-// Function to delete a task
-function deleteTask(event) {
-    if (event.target.classList.contains("deleteTask")) {
-        event.target.parentElement.remove(); // Remove the <li> element
+listContainer.addEventListener("click", function(e){
+    if(e.target.tagName === "LI"){
+        e.target.classList.toggle("checked");
+        
+        saveData();
     }
+    else if(e.target.tagName === "SPAN"){
+        e.target.parentElement.remove();
+       
+        saveData();
+    }
+}, false);
+
+
+function saveData(){
+    localStorage.setItem("data", listContainer.innerHTML);
 }
 
-// Add event listener for "Add Task" button
-addButton.addEventListener("click", addTask);
-
-// Add event listener to delete tasks
-taskList.addEventListener("click", deleteTask);
-
-// Allow adding task using "Enter" key
-inputBox.addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-        addTask();
-    }
-});
+function showTask(){
+    listContainer.innerHTML = localStorage.getItem("data");
+}
+showTask();
